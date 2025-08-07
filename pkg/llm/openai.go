@@ -6,6 +6,7 @@ import (
 	"exception-reporter-agent/model"
 	"fmt"
 	"github.com/go-resty/resty/v2"
+	"strings"
 )
 
 type Client struct {
@@ -18,7 +19,7 @@ func NewClient(apiKey, model string) *Client {
 }
 
 func (c *Client) Process(ctx context.Context, exc model.ExceptionPayload) (*model.LLMResponse, error) {
-	prompt := fmt.Sprintf(`Ты анализируешь исключения из Laravel-приложения. Дай краткое описание (summary), описание бага (description) и приоритет (Low/Medium/High).
+	prompt := fmt.Sprintf(`Ты анализируешь исключения из Laravel-приложения. Дай краткое описание (summary), описание бага (description) с трейсом и всей необходимой информацией и приоритет (Low/Medium/High).
 
 Message: %s
 File: %s:%d
@@ -70,9 +71,10 @@ Trace: %v
 	}
 
 	content := result.Choices[0].Message.Content
+	cleanContent := strings.ReplaceAll(content, `\`, `\\`)
 
 	var parsed model.LLMResponse
-	err = json.Unmarshal([]byte(content), &parsed)
+	err = json.Unmarshal([]byte(cleanContent), &parsed)
 	if err != nil {
 		return nil, fmt.Errorf("llm returned invalid JSON: %w\nraw: %s", err, content)
 	}
