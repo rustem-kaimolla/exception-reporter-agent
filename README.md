@@ -1,4 +1,6 @@
-# Exception Reporter Agent
+# Exception Reporter Agent LLM + Jira
+
+![Exception Reporter Agent](https://raw.githubusercontent.com/rustem-kaimolla/exception-reporter-agent/main/cmd.png)
 
 Exception Reporter Agent is a lightweight TCP server designed to receive and log exception reports from applications (e.g., Laravel) via a custom binary or JSON-based protocol. It is intended to be used in conjunction with a Laravel package (like laravel-exception-reporter) that handles the client-side reporting.
 
